@@ -51,8 +51,7 @@ class Board extends React.Component{
         onClick={()=> this.onRestartClick(this.state.squares)}>
         Click here to restart</button>;
         let contentRestart;
-        
-        
+                
         if(winner){
             status = 'Winner : ' + winner;
             contentRestart = buttonRestart;
@@ -66,12 +65,11 @@ class Board extends React.Component{
         else{
             status = 'Next player : '+(this.state.xIsNext ? 'X' : 'O');
         }
-        
-        
+                
         return(
             <div>
                 <div className="status">{status}</div>
-                <div className="restart">{contentRestart}</div>
+                {/* <div className="restart">{contentRestart}</div> */}
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
@@ -130,25 +128,22 @@ class Game extends React.Component {
         };
     }
     renderBoard(i){
+        for(let i=0; i<5; i++){
         return(
         <div className="game-board">
-            <Board />
+            <Board value={i}/>
           </div>
-        )
+        );
+        }
+    }
+    renderRemplir(i){
+        // this.renderBoard(i)=
+
     }
     render() {
-        
-
       return (
-        <div className="game">
-          {this.renderBoard(0)}
-          {this.renderBoard(1)}
-          {this.renderBoard(2)}
-          {this.renderBoard(3)}
-          {this.renderBoard(4)}
-          {/* <div className="game-board">
-            <Board />
-          </div> */}
+        <div className="game">    
+            {this.renderBoard()}
           <div className="game-info">
           </div>
         </div>
