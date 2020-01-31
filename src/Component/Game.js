@@ -16,6 +16,7 @@ class Board extends React.Component{
             xIsNext: true,
             result: '0',
         };
+        this.props = this.state.result;
     }
     onSquareClick(i){
         const squares = this.state.squares.slice();
@@ -70,6 +71,7 @@ class Board extends React.Component{
             <div>
                 <div className="status">{status}</div>
                 {/* <div className="restart">{contentRestart}</div> */}
+                {<div>{winner}</div>}
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
@@ -127,14 +129,13 @@ class Game extends React.Component {
             board : Array(5).fill(null),
         };
     }
-    renderBoard(i){
-        for(let i=0; i<5; i++){
+    renderBoard(i){       
         return(
         <div className="game-board">
-            <Board value={i}/>
+            <Board value={this.props.result}/>
           </div>
         );
-        }
+        
     }
     renderRemplir(i){
         // this.renderBoard(i)=
