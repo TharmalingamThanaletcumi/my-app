@@ -6,72 +6,20 @@ function Square(props){
     <button className="square" onClick={props.onClick}>
      {props.value}
     </button>
-    )
+    );
 }
 class Board extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            squares : Array(9).fill(null),
-            xIsNext: true,
-            result: '0',
-        };
-        this.props = this.state.result;
-    }
-    onSquareClick(i){
-        const squares = this.state.squares.slice();
-        if(CountWinnerScore(squares) || squares[i])
-        {
-            return;
-        }
-        squares[i]= this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-            squares: squares,
-            xIsNext: !this.state.xIsNext,
-        });
-    }
-    onRestartClick(i){  
-        this.setState({
-            squares : Array(9).fill(null),
-            xIsNext: true,
-        });
-    }
-    renderSquare(i){
+    renderSquare(i) {
         return (
-        <Square 
-            value={this.state.squares[i]} 
-            onClick={()=> this.onSquareClick(i)} 
-        />
+          <Square
+            value={this.props.squares[i]}
+            onClick={() => this.props.onClick(i)}
+          />
         );
     }
-    render(){
-        const winner = CountWinnerScore(this.state.squares);
-        let resultNull = matchNull(this.state.squares);
-        let status;
-        let buttonRestart = <button className="btnRestart" 
-        onClick={()=> this.onRestartClick(this.state.squares)}>
-        Click here to restart</button>;
-        let contentRestart;
-                
-        if(winner){
-            status = 'Winner : ' + winner;
-            contentRestart = buttonRestart;
-            this.state.result = winner;
-        }    
-        else if(!resultNull){                       
-            status = 'Match Null';
-            contentRestart = buttonRestart;
-            this.state.result = 'Null';
-        }
-        else{
-            status = 'Next player : '+(this.state.xIsNext ? 'X' : 'O');
-        }
-                
+    render(){                
         return(
-            <div>
-                <div className="status">{status}</div>
-                {/* <div className="restart">{contentRestart}</div> */}
-                {<div>{winner}</div>}
+            <div>            
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
@@ -126,27 +74,80 @@ class Game extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            board : Array(5).fill(null),
+            history :[{
+                squares: Array(9).fill(null),
+            }],
+            xIsNext: true,
+            result: '0',
         };
     }
-    renderBoard(i){       
-        return(
-        <div className="game-board">
-            <Board value={this.props.result}/>
-          </div>
-        );
-        
-    }
-    renderRemplir(i){
-        // this.renderBoard(i)=
+    onSquareClick(i){
+        const history = this.state.history;
+        const current = history[history.length - 1];
+        const squares = current.squares.slice();
 
+        if(CountWinnerScore(squares) || squares[i])
+        {
+            return;
+        }
+        squares[i]= this.state.xIsNext ? 'X' : 'O';
+        this.setState({
+            history: history.concat([{
+                squares: squares,
+              }]),
+              xIsNext: !this.state.xIsNext,
+        });
+    } 
+    onRestartClick(i){  
+        this.setState({
+            history: [{
+                squares : Array(9).fill(null),
+            }],    
+            xIsNext: true,
+        });
     }
     render() {
+        const history = this.state.history;
+        const current = history[history.length - 1];
+        const winner = CountWinnerScore(current.squares);
+        let resultNull = matchNull(current.squares);
+        let status;
+        let buttonRestart = <button className="btnRestart" 
+        onClick={()=> this.onRestartClick(current.squares)}>
+        Click here to restart</button>;
+        let contentRestart;
+        // let nineposition; 
+                
+        if(winner){
+            status = 'Winner : ' + winner;
+            contentRestart = buttonRestart;
+            this.state.result = winner;
+            // nineposition = this.state.history;
+
+        }    
+        else if(!resultNull){                       
+            status = 'Match Null';
+            contentRestart = buttonRestart;
+            this.state.result = 'Null';
+            // nineposition = this.state.history.current.squares[9];
+        }
+        else{
+            status = 'Next player : '+(this.state.xIsNext ? 'X' : 'O');
+        }
+
       return (
         <div className="game">    
-            {this.renderBoard()}
-          <div className="game-info">
-          </div>
+           <div className="game-board">
+            <Board 
+                squares={current.squares}
+                onClick={(i) => this.onSquareClick(i)}
+            />
+            </div>
+           <div className="game-info">
+               <div>{status}</div>
+               <div>{contentRestart}</div>
+               {/* <div>{nineposition}</div> */}
+           </div>
         </div>
       );
     }
